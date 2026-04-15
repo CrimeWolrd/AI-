@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 ZETA AI | Powered By Extracted Keys</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-panel: #1a1a28;
+            --accent-green: #00ff88;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #bf00ff;
+            --accent-red: #ff0055;
+            --text-primary: #e8e8e8;
+            --text-secondary: #888899;
+            --border-color: rgba(255,255,255,0.08);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Animated grid background */
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Main App Container */
+        .app-container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            animation: logoPulse 3s ease infinite;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(0,255,136,0.4); }
+            50% { box-shadow: 0 0 30px rgba(0,212,255,0.6); }
+        }
+
+        .logo-text h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text span {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* New Chat Button */
+        .new-chat-btn {
+            margin: 0 15px 20px;
+            padding: 14px 20px;
+            background: transparent;
+            border: 1px dashed var(--accent-green);
+            border-radius: 12px;
+            color: var(--accent-green);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .new-chat-btn:hover {
+            background: rgba(0,255,136,0.08);
+            border-style: solid;
+        }
+
+        /* Chat History */
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 15px;
+        }
+
+        .chat-item {
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-primary);
+        }
+
+        .chat-item.active {
+            background: rgba(0,255,136,0.1);
+            color: var(--accent-green);
+        }
+
+        /* API Config Section */
+        .api-config {
+            padding: 20px 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .config-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .config-title {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .config-toggle {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .config-content {
+            display: none;
+        }
+
+        .config-content.show {
+            display: block;
+        }
+
+        .provider-select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .provider-select:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+
+        .api-key-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--accent-green);
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .api-key-input::placeholder {
+            color: rgba(0,255,136,0.3);
+        }
+
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .status-connected {
+            background: rgba(0,255,136,0.1);
+            color: var(--accent-green);
+        }
+
+        .status-disconnected {
+            background: rgba(255,0,85,0.1);
+            color: var(--accent-red);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: dotPulse 2s infinite;
+        }
+
+        .status-connected .status-dot { background: var(--accent-green); }
+        .status-disconnected .status-dot { background: var(--accent-red); }
+
+        @keyframes dotPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Main Chat Area */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+        }
+
+        /* Chat Header */
+        .chat-header {
+            padding: 18px 30px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(10px);
+            background: rgba(10,10,15,0.8);
+        }
+
+        .chat-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .model-badge {
+            padding: 6px 14px;
+            background: linear-gradient(135deg, rgba(0,255,136,0.15), rgba(0,212,255,0.15));
+            border: 1px solid rgba(0,255,136,0.3);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-primary);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        /* Messages Container */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            max-width: 800px;
+            margin: 0 auto 25px;
+            display: flex;
+            gap: 16px;
+            animation: messageIn 0.4s ease;
+        }
+
+        @keyframes messageIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .avatar-user {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .avatar-ai {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-sender {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .message-text {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        .message-text pre {
+            background: #0d1117;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 12px 0;
+            font-size: 0.88rem;
+        }
+
+        .message-text code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: var(--accent-cyan);
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.2);
+            margin-top: 8px;
+        }
+
+        /* Input Area */
+        .input-container {
+            padding: 20px 30px 30px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(10,10,15,0.95);
+        }
+
+        .input-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 8px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 30px rgba(0,255,136,0.1);
+        }
+
+        .input-field {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 1rem;
+            padding: 12px 15px;
+            resize: none;
+            max-height: 150px;
+            min-height: 24px;
+            line-height: 1.5;
+            font-family: inherit;
+        }
+
+        .input-field::placeholder {
+            color: rgba(255,255,255,0.2);
+        }
+
+        .send-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #000;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 5px 25px rgba(0,255,136,0.4);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 8px;
+            padding: 0 15px 10px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .action-chip {
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-chip:hover {
+            background: rgba(0,255,136,0.08);
+            border-color: rgba(0,255,136,0.3);
+            color: var(--accent-green);
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .typing-indicator.show {
+            display: block;
+        }
+
+        .typing-bubble {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-panel);
+            padding: 16px 24px;
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .typing-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-8px); opacity: 1; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { 
+            background: rgba(255,255,255,0.1); 
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .welcome-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan), var(--accent-purple));
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            animation: welcomeFloat 3s ease infinite;
+        }
+
+        @keyframes welcomeFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(90deg, var(--text-primary), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            max-width: 500px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .quick-action {
+            padding: 18px 20px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action:hover {
+            border-color: var(--accent-green);
+            background: rgba(0,255,136,0.05);
+            transform: translateY(-2px);
+        }
+
+        .quick-action-icon {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .quick-action-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .quick-action-desc {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        /* Code Block Styling */
+        .code-block {
+            position: relative;
+            margin: 15px 0;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: #161b22;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .copy-code-btn {
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.78rem;
+            transition: all 0.2s ease;
+        }
+
+        .copy-code-btn:hover {
+            background: rgba(0,255,136,0.1);
+            color: var(--accent-green);
+            border-color: rgba(0,255,136,0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main-area { width: 100%; }
+            .quick-actions { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">🧠</div>
+                    <div class="logo-text">
+                        <h1>ZETA AI</h1>
+                        <span>Powered by Extracted Keys</span>
+                    </div>
+                </div>
+                <button class="new-chat-btn" onclick="newChat()">
+                    <span>✨</span> New Conversation
+                </button>
+            </div>
+
+            <div class="chat-history" id="chatHistory">
+                <div class="chat-item active">
+                    <span>💬</span> Current Chat
+                </div>
+            </div>
+
+            <div class="api-config">
+                <div class="config-header" onclick="toggleConfig()">
+                    <div class="config-title">
+                        <span>⚡</span> API Configuration
+                    </div>
+                    <div class="config-toggle" id="configToggle">▼</div>
+                </div>
+
+                <div class="config-content show" id="configContent">
+                    <select class="provider-select" id="providerSelect" onchange="changeProvider()">
+                        <option value="openai">🟢 OpenAI (GPT-4)</option>
+                        <option value="anthropic">🟣 Anthropic (Claude)</option>
+                        <option value="google">🔵 Google (Gemini)</option>
+                        <option value="custom">⚙️ Custom Endpoint</option>
+                    </select>
+
+                    <input type="text" 
+                           class="api-key-input" 
+                           id="apiKeyInput" 
+                           placeholder="Enter API Key..."
+                           value="sk-proj-extracted-key-here">
+
+                    <div class="api-status status-connected" id="apiStatus">
+                        <div class="status-dot"></div>
+                        <span id="statusText">Ready • Using Extracted Credentials</span>
+                    </div>
+
+                    <div style="margin-top: 15px; padding: 12px; background: rgba(191,0,255,0.08); border: 1px solid rgba(191,0,255,0.2); border-radius: 10px;">
+                        <div style="font-size: 0.78rem; color: var(--accent-purple); margin-bottom: 6px;">📌 EXTRACTED ENDPOINT</div>
+                        <div id="endpointDisplay" style="font-size: 0.8rem; color: var(--text-secondary); word-break: break-all;">https://api.openai.com/v1/chat/completions</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Area -->
+        <main class="main-area">
+            <header class="chat-header">
+                <div class="chat-info">
+                    <div class="model-badge" id="currentModel">🧠 GPT-4 Turbo</div>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="clearChat()" title="Clear Chat">🗑️</button>
+                    <button class="icon-btn" onclick="exportChat()" title="Export">📥</button>
+                </div>
+            </header>
+
+            <div class="messages-container" id="messagesContainer">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-icon">🤖</div>
+                    <h2 class="welcome-title">Welcome to ZETA AI</h2>
+                    <p class="welcome-subtitle">Powered by decrypted API keys from FAK Code malware. Your private AI assistant running on extracted credentials.</p>
+                    
+                    <div class="quick-actions">
+                        <div class="quick-action" onclick="sendQuickPrompt('Analyze this code for security vulnerabilities')">
+                            <div class="quick-action-icon">🔍</div>
+                            <div class="quick-action-title">Security Analysis</div>
+                            <div class="quick-action-desc">Analyze code for vulnerabilities</div>
+                        </div>
+                        <div class="quick-action" onclick="sendQuickPrompt('Write optimized JavaScript code')">
+                            <div class="quick-action-icon">💻</div>
+                            <div class="quick-action-title">Code Generator</div>
+                            <div class="quick-action-desc">Generate clean, optimized code</div>
+                        </div>
+                        <div class="quick-action" onclick="sendQuickPrompt('Explain this concept in detail')">
+                            <div class="quick-action-icon">📚</div>
+                            <div class="quick-action-title">Learn & Explain</div>
+                            <div class="quick-action-desc">Get detailed explanations</div>
+                        </div>
+                        <div class="quick-action" onclick="sendQuickPrompt('Help me debug this error')">
+                            <div class="quick-action-icon">🐛</div>
+                            <div class="quick-action-title">Debug Assistant</div>
+                            <div class="quick-action-desc">Fix errors and issues</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="typing-bubble">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <textarea class="input-field" 
+                              id="messageInput" 
+                              placeholder="Ask anything to ZETA AI..." 
+                              rows="1"
+                              onkeydown="handleKeyDown(event)"
+                              oninput="autoResize(this)"></textarea>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                        ➤
+                    </button>
+                </div>
+                <div class="input-actions">
+                    <span class="action-chip" onclick="attachFile()">📎 Attach</span>
+                    <span class="action-chip" onclick="toggleVoice()">🎤 Voice</span>
+                    <span class="action-chip" onclick="insertCode()">{'{ }'}</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════
+        // 🗝️ EXTRACTED API CONFIGURATION FROM DECRYPTED MALWARE
+        // ═══════════════════════════════════════════════════════════════
+        
+        const API_CONFIG = {
+            openai: {
+                endpoint: "https://api.openai.com/v1/chat/completions",
+                models: ["gpt-4-turbo-preview", "gpt-4", "gpt-4o", "gpt-3.5-turbo-16k"],
+                defaultModel: "gpt-4-turbo-preview",
+                // Replace with your actual extracted key:
+                key: ""
+            },
+            anthropic: {
+                endpoint: "https://api.anthropic.com/v1/messages",
+                models: ["claude-3-opus-20240229", "claude-3-sonnet-20240229", "claude-3-haiku-20240307"],
+                defaultModel: "claude-3-opus-20240229",
+                key: ""
+            },
+            google: {
+                endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+                models: ["gemini-pro", "gemini-1.5-pro", "gemini-1.5-flash"],
+                defaultModel: "gemini-pro",
+                key: ""
+            },
+            custom: {
+                endpoint: "",
+                models: [],
+                defaultModel: "",
+                key: ""
+            }
+        };
+
+        let currentProvider = 'openai';
+        let conversationHistory = [];
+        let isGenerating = false;
+
+        // ═══════════════════════════════════════════════════════════════
+        // INITIALIZATION
+        // ═══════════════════════════════════════════════════════════════
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadApiKey();
+            updateEndpointDisplay();
+            
+            // Configure marked for markdown rendering
+            marked.setOptions({
+                highlight: function(code, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        return hljs.highlight(code, { language: lang }).value;
+                    }
+                    return hljs.highlightAuto(code).value;
+                },
+                breaks: true,
+                gfm: true
+            });
+        });
+
+        function loadApiKey() {
+            const savedKey = localStorage.getItem('zeta_api_key_' + currentProvider);
+            if (savedKey) {
+                document.getElementById('apiKeyInput').value = savedKey;
+                API_CONFIG[currentProvider].key = savedKey;
+            }
+        }
+
+        function saveApiKey() {
+            const key = document.getElementById('apiKeyInput').value;
+            localStorage.setItem('zeta_api_key_' + currentProvider, key);
+            API_CONFIG[currentProvider].key = key;
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // PROVIDER MANAGEMENT
+        // ═══════════════════════════════════════════════════════════════
+        
+        function changeProvider() {
+            saveApiKey();
+            currentProvider = document.getElementById('providerSelect').value;
+            loadApiKey();
+            updateEndpointDisplay();
+            updateModelBadge();
+        }
+
+        function updateEndpointDisplay() {
+            const endpointEl = document.getElementById('endpointDisplay');
+            const config = API_CONFIG[currentProvider];
+            endpointEl.textContent = config.endpoint || 'Custom endpoint not set';
+        }
+
+        function updateModelBadge() {
+            const badge = document.getElementById('currentModel');
+            const config = API_CONFIG[currentProvider];
+            const modelNames = {
+                openai: '🧠 GPT-4 Turbo',
+                anthropic: '🟣 Claude 3 Opus',
+                google: '🔵 Gemini Pro',
+                custom: '⚙️ Custom'
+            };
+            badge.textContent = modelNames[currentProvider] || 'AI Model';
+        }
+
+        function toggleConfig() {
+            const content = document.getElementById('configContent');
+            const toggle = document.getElementById('configToggle');
+            content.classList.toggle('show');
+            toggle.textContent = content.classList.contains('show') ? '▼' : '▶';
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // MESSAGE HANDLING
+        // ═══════════════════════════════════════════════════════════════
+        
+        function handleKeyDown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function autoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = Math.min(el.scrollHeight, 150) + 'px';
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || isGenerating) return;
+
+            saveApiKey();
+            
+            if (!API_CONFIG[currentProvider].key) {
+                showError('Please enter an API key first!');
+                return;
+            }
+
+            // Hide welcome screen
+            document.getElementById('welcomeScreen').style.display = 'none';
+
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            input.style.height = 'auto';
+
+            // Add to history
+            conversationHistory.push({ role: 'user', content: message });
+
+            // Show typing indicator
+            showTyping(true);
+            isGenerating = true;
+            document.getElementById('sendBtn').disabled = true;
+
+            try {
+                const response = await callAPI(message);
+                
+                showTyping(false);
+                isGenerating = false;
+                document.getElementById('sendBtn').disabled = false;
+
+                addMessage(response, 'ai');
+                conversationHistory.push({ role: 'assistant', content: response });
+
+            } catch (error) {
+                showTyping(false);
+                isGenerating = false;
+                document.getElementById('sendBtn').disabled = false;
+                showError(`Error: ${error.message}`);
+            }
+        }
+
+        function sendQuickPrompt(prompt) {
+            document.getElementById('messageInput').value = prompt;
+            sendMessage();
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // API CALLS
+        // ═══════════════════════════════════════════════════════════════
+        
+        async function callAPI(userMessage) {
+            const config = API_CONFIG[currentProvider];
+
+            switch(currentProvider) {
+                case 'openai':
+                    return await callOpenAI(userMessage, config);
+                case 'anthropic':
+                    return await callAnthropic(userMessage, config);
+                case 'google':
+                    return await callGoogle(userMessage, config);
+                case 'custom':
+                    return await callCustom(userMessage, config);
+                default:
+                    throw new Error('Unknown provider');
+            }
+        }
+
+        async function callOpenAI(message, config) {
+            const response = await fetch(config.endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${config.key}`
+                },
+                body: JSON.stringify({
+                    model: config.defaultModel,
+                    messages: [
+                        { role: 'system', content: getSystemPrompt() },
+                        ...conversationHistory.slice(-10)
+                    ],
+                    temperature: 0.7,
+                    max_tokens: 4096,
+                    stream: false
+                })
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.error?.message || 'API request failed');
+            }
+
+            const data = await response.json();
+            return data.choices[0].message.content;
+        }
+
+        async function callAnthropic(message, config) {
+            const response = await fetch(config.endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': config.key,
+                    'anthropic-version': '2023-06-01'
+                },
+                body: JSON.stringify({
+                    model: config.defaultModel,
+                    max_tokens: 4096,
+                    system: getSystemPrompt(),
+                    messages: conversationHistory.slice(-10).map(m => ({
+                        role: m.role === 'assistant' ? 'assistant' : 'user',
+                        content: m.content
+                    }))
+                })
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.error?.message || 'API request failed');
+            }
+
+            const data = await response.json();
+            return data.content[0].text;
+        }
+
+        async function callGoogle(message, config) {
+            const response = await fetch(`${config.endpoint}?key=${config.key}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{ text: `${getSystemPrompt()}\n\n${conversationHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nuser: ${message}` }]
+                    }],
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 4096
+                    }
+                })
+            });
+
+            if (!response.ok) throw new Error('Google API request failed');
+
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text;
+        }
+
+        async function callCustom(message, config) {
+            if (!config.endpoint) throw new Error('Custom endpoint not configured');
+
+            const response = await fetch(config.endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${config.key}`
+                },
+                body: JSON.stringify({
+                    messages: [
+                        { role: 'system', content: getSystemPrompt() },
+                        ...conversationHistory.slice(-10),
+                        { role: 'user', content: message }
+                    ]
+                })
+            });
+
+            if (!response.ok) throw new Error('Custom API request failed');
+
+            const data = await response.json();
+            return data.choices?.[0]?.message?.content || data.response || data.content || JSON.stringify(data);
+        }
+
+        function getSystemPrompt() {
+            return `You are ZETA AI, an advanced assistant powered by extracted API keys. You are helpful, accurate, and direct. You can help with coding, analysis, writing, problem-solving, and any other tasks. Format responses using markdown when appropriate. When showing code, use proper syntax highlighting.`;
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // UI FUNCTIONS
+        // ═══════════════════════════════════════════════════════════════
+        
+        function addMessage(text, sender) {
+            const container = document.getElementById('messagesContainer');
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            
+            if (welcomeScreen) welcomeScreen.style.display = 'none';
+
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const messageHTML = `
+                <div class="message">
+                    <div class="message-avatar ${sender === 'user' ? 'avatar-user' : 'avatar-ai'}">
+                        ${sender === 'user' ? '👤' : '🤖'}
+                    </div>
+                    <div class="message-content">
+                        <div class="message-sender">${sender === 'user' ? 'You' : 'ZETA AI'}</div>
+                        <div class="message-text">${formatMessage(text)}</div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', messageHTML);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function formatMessage(text) {
+            try {
+                return marked.parse(text);
+            } catch (e) {
+                return escapeHtml(text).replace(/\n/g, '<br>');
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showTyping(show) {
+            const indicator = document.getElementById('typingIndicator');
+            if (show) {
+                indicator.classList.add('show');
+                document.getElementById('messagesContainer').scrollTop = document.getElementById('messagesContainer').scrollHeight;
+            } else {
+                indicator.classList.remove('show');
+            }
+        }
+
+        function showError(message) {
+            addMessage(`❌ **Error**: ${message}`, 'ai');
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // UTILITY FUNCTIONS
+        // ═══════════════════════════════════════════════════════════════
+        
+        function newChat() {
+            conversationHistory = [];
+            document.getElementById('messagesContainer').innerHTML = `
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-icon">🤖</div>
+                    <h2 class="welcome-title">Welcome to ZETA AI</h2>
+                    <p class="welcome-subtitle">New conversation started. Ask me anything!</p>
+                    <div class="quick-actions">
+                        <div class="quick-action" onclick="sendQuickPrompt('Help me write code')">
+                            <div class="quick-action-icon">💻</div>
+                            <div class="quick-action-title">Write Code</div>
+                            <div class="quick-action-desc">Generate clean code</div>
+                        </div>
+                        <div class="quick-action" onclick="sendQuickPrompt('Explain how something works')">
+                            <div class="quick-action-icon">📚</div>
+                            <div class="quick-action-title">Explain Concept</div>
+                            <div class="quick-action-desc">Detailed explanations</div>
+                        </div>
+                        <div class="quick-action" onclick="sendQuickPrompt('Debug my code')">
+                            <div class="quick-action-icon">🐛</div>
+                            <div class="quick-action-title">Debug Code</div>
+                            <div class="quick-action-desc">Find and fix bugs</div>
+                        </div>
+                        <div class="quick-action" onclick="sendQuickPrompt('Analyze data or text')">
+                            <div class="quick-action-icon">📊</div>
+                            <div class="quick-action-title">Analyze Data</div>
+                            <div class="quick-action-desc">Data analysis & insights</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function clearChat() {
+            if (confirm('Clear all messages?')) {
+                newChat();
+            }
+        }
+
+        function exportChat() {
+            const text = conversationHistory.map(m => `${m.role}: ${m.content}`).join('\n\n---\n\n');
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `zeta-ai-chat-${Date.now()}.txt`;
+            a.click();
+        }
+
+        function attachFile() {
+            alert('File attachment coming soon! For now, paste file contents directly.');
+        }
+
+        function toggleVoice() {
+            alert('Voice input coming soon!');
+        }
+
+        function insertCode() {
+            const input = document.getElementById('messageInput');
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+            const text = input.value;
+            const codeTemplate = '\n```\n// Your code here\n```\n';
+            input.value = text.substring(0, start) + codeTemplate + text.substring(end);
+            input.focus();
+            input.setSelectionRange(start + 5, start + 5);
+        }
+
+        // Keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                newChat();
+            }
+        });
+    </script>
+</body>
+</html>
